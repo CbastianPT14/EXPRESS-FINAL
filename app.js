@@ -1,28 +1,16 @@
-const express = require('express');
+const express = require('express')
+const routerTarea = require('./src/router/list-view-router');
+const router = require('./src/router/list-edit-router');
 const app = express();
-const port = 3000;
+app.use(express.json());
+const port = 8000;
 
-// Definir un arreglo con la lista de tareas
-const listaDeTareas = [
-  {
-    id: "123456",
-    isCompleted: false,
-    description: "Walk the dog"
-  },
-  {
-    id: "789012",
-    isCompleted: true,
-    description: "Do the laundry"
-  },
-  // Puedes agregar más tareas según sea necesario
-];
+app.use('/tareas', routerTarea);
+app.use('/tareas', router)
 
-// Endpoint para obtener la lista de tareas
-app.get('/tareas', (req, res) => {
-  res.json(listaDeTareas);
+app.listen(port, ()=>{
+  console.log('El servidor esta en http://localhost:8000/tareas');
 });
 
-// Iniciar el servidor en el puerto especificado
-app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}`);
-});
+module.exports= app
+
