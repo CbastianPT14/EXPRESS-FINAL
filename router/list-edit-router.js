@@ -1,32 +1,37 @@
-const express = require('express');
-const listaTareas = require('../lista')
-const valuePost = require('../middlewares/valuePost');
-const router = express.Router();
+const express = require("express");
+const listEditRouter = express.Router();
+//importando manejador de errores
+const errorHandler = require('../middlewares/error-handler')
 
-router.use(valuePost);
-
-//crear tarea
-router.post('/', (req, res)=>{
-  const tareaNueva = req.body;
-  listaTareas.push(tareaNueva);
-  res.status(200).send('tarea agregada exitosamente');
+//ruta para crear nueva tarea
+listEditRouter.post('/create', (req, res, next) => {
+    //validacion y confirmacion para crear una tarea
+    try {
+        if (!req.body || !req.body.description) {
+            const error = new Error('falta la descripcion de la tarea');
+            error.status(400);
+        }
+        //crear tarea
+        res.send('tarea creada exitosamente');
+    } catch (error) {
+        //pasar error al middleware de manejo de errores
+        next(error);
+    }
 });
 
-//Eliminar tarea
-router.delete('/delete/:idTarea', (req, res)=>{
-  const id = req.params.idTarea;
-  const indexTarea = listaTareas.findIndex((e) => e.id == id);
-  const eliminarTarea = listaTareas.splice(indexTarea, 1);
-  res.status(200).send({eliminarTarea});
+//ruta para eliminar tarea
+listEditRouter.delete('/delete/:id', (req, res) => {
+    const taskId = parseInt(req.params.id);
+    res.send(`se elimino la tarea ${taskId}`);
 });
 
-//actualizar tarea
-router.put('/update/idTarea', (req, res)=>{
-  const id= req.params.idTarea;
-  const tarea = req.body
-  const indexTarea = listaTareas.findIndex((e)= e.id == id);
-  listaTareas[indexTarea] = tarea+res.status(200).send('tarea modificada con exito');
+//ruta para actualizar una tarea
+listEditRouter.put('/update/:id', (req, res) => {
+    const taskId = parseInt(req.params.id);
+    res.send(`se actualizo es estatus de la tarea ${taskId} `);
 });
 
+//middleware de manejo de errores en el router
+listEditRouter.use(errorHandler);
 
-module.exports = router;
+module.exports = listEditRouter;
